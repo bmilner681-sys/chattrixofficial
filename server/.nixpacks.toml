@@ -1,6 +1,8 @@
 [languages]
 nodejs = "18"
 
-[buildConfig]
-buildCommand = "npm run build"
-startCommand = "npm start"
+[phases.build]
+cmds = ["npm install", "npm run build"]
+
+[start]
+cmd = "npm start"
