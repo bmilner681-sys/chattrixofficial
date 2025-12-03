@@ -22,9 +22,6 @@ const io = new SocketIOServer(httpServer, {
 app.use(cors());
 app.use(express.json());
 
-// Initialize database
-await initializeDatabase();
-
 // Routes
 app.use('/api/auth', authRoutes);
 
@@ -35,6 +32,18 @@ io.on('connection', (socket: Socket) => {
 
 const PORT = process.env.PORT || 3001;
 
-httpServer.listen(PORT, () => {
-  console.log(`🚀 Chattrix server running on port ${PORT}`);
-});
+async function start() {
+  try {
+    // Initialize database
+    await initializeDatabase();
+    
+    httpServer.listen(PORT, () => {
+      console.log(`🚀 Chattrix server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+start();
