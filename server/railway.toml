@@ -1,0 +1,8 @@
+[deploy]
+startCommand = "npm start"
+buildCommand = "npm run build"
+healthcheckPath = "/"
+healthcheckTimeout = 5
+
+[build]
+buildCommand = "npm install && npm run build"
