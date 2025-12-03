@@ -29,14 +29,12 @@ interface ChatWindowProps {
   userAvatar?: string;
 }
 
-const EMOJI_PICKER = ['👍', '❤️', '😂', '😮', '😢', '🔥', '✨', '🎉'];
-
 export function ChatWindow({ channelId, channelName, userId, username }: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout>();
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
     socket.emit('channel:join', { channelId, userId });
@@ -56,8 +54,7 @@ export function ChatWindow({ channelId, channelName, userId, username }: ChatWin
         setTypingUsers((prev) => {
           const newSet = new Set(prev);
           // Remove user from typing list
-          const arr = Array.from(newSet);
-          return new Set(arr.filter((u) => true));
+          return new Set(newSet);
         });
       }
     };
