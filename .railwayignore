@@ -1,0 +1,7 @@
+client/
+.git
+.gitignore
+README.md
+DEPLOYMENT*
+DOCKER*
+*.md
