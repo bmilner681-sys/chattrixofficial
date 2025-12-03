@@ -1,0 +1,10 @@
+{
+  "build": {
+    "builder": "dockerfile",
+    "dockerfile": "client.Dockerfile"
+  },
+  "environment": {
+    "VITE_SOCKET_URL": "https://chattrix-api.railway.app",
+    "VITE_API_URL": "https://chattrix-api.railway.app"
+  }
+}
