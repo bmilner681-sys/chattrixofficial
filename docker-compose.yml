@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # Backend API Server
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - NODE_ENV=development
+      - JWT_SECRET=dev_secret_key_change_in_production
+      - DATABASE_URL=sqlite:./data/chattrix.db
+      - CLIENT_URL=http://localhost:3000
+    volumes:
+      - ./server/data:/app/data
+    networks:
+      - chattrix-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3001/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend React App
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_SOCKET_URL=http://localhost:3001
+      - VITE_API_URL=http://localhost:3001
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - chattrix-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/index.html"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Note: SQLite database is stored locally in ./server/data
+  # No separate service needed - the backend creates the database file
+
+  # Optional: Postgres for production-like testing
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=chattrix
+      - POSTGRES_PASSWORD=dev_password
+      - POSTGRES_DB=chattrix_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - chattrix-network
+    profiles:
+      - postgres
+
+networks:
+  chattrix-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

@@ -1,0 +1,9 @@
+services:
+  - type: web
+    cpus: 0.5
+    memory: 512
+    plan: free
+    healthCheck:
+      path: /api/auth/verify
+      interval: 300
+    autoDeploy: true

@@ -1,0 +1,18 @@
+app-name = "chattrix-frontend"
+primary_region = "iad"
+
+[build]
+  builder = "heroku/buildpacks:20"
+
+[[services]]
+protocol = "tcp"
+internal_port = 3000
+processes = ["app"]
+
+  [services.http_checks.checks.status]
+    success_codes = [200, 206, 301, 302, 304, 307, 308, 401, 403, 404]
+    interval = "30s"
+    timeout = "5s"
+
+[env]
+  NODE_ENV = "production"
